@@ -1,12 +1,14 @@
 from flask import Flask, request
+from flask_cors import cross_origin
 import requests
 
 def main():
     app = Flask(__name__)
     
     @app.route("/estoque/post")
+    @cross_origin('/*')
     def post():
-        response = requests.get('http://localhost:5201/estoque')
+        response = requests.get('http://localhost:5200/estoque')
         data = response.json()
 
         def post_fun(json_post):
@@ -14,7 +16,7 @@ def main():
             return 'Status do Post:' + str(response_post.status_code)
 
         def put_fun(json_put, id):
-            response_put = requests.put(f'http://localhost:5201/estoque/{id}', json=json_put)
+            response_put = requests.put(f'http://localhost:5202/estoque/{id}', json=json_put)
             return 'Status do put:' + str(response_put.status_code)
 
         prod = request.args.get('nome')
@@ -38,7 +40,7 @@ def main():
             }
             return post_fun(json_data)
         
-    app.run(debug=True, port=5000)
+    app.run(debug=True, port=5001)
 
 if __name__ == "__main__":
     main()

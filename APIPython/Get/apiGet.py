@@ -1,12 +1,16 @@
 from flask import Flask, request
+from flask_cors import cross_origin
+
 import requests
 
 def main():
     app = Flask(__name__)
 
+    
     @app.route("/estoque/get")
+    @cross_origin('/*')
     def get():
-        response = requests.get('http://localhost:5201/estoque')
+        response = requests.get('http://localhost:5200/estoque')
         data = response.json()
     
         filtro = request.args.get('filtro', default='Todos')
@@ -25,6 +29,7 @@ def main():
                 status = "Atenção Moderada"
     
             json_get.append({
+                "id": d.get('id'),
                 "produto":d.get('nome'),
                 "quantidade":d.get('qtd'),
                 "status": status
@@ -32,7 +37,7 @@ def main():
             json_response = [item for item in json_get if item.get('status').lower() == filtro.lower() or filtro == 'Todos']
         return json_response
     
-    app.run(debug=True, port=5002)
+    app.run(debug=True, port=5000)
 
 if __name__ == "__main__":
     main()
